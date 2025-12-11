@@ -7,56 +7,57 @@ interface TabButtonProps {
   name: string;
   icon: keyof typeof Ionicons.glyphMap;
   route: string;
+  routeName: string;
 }
 
 export default function FloatingTabBar() {
-const rawSegments = useSegments();
-const segments = rawSegments as string[]; 
-const active = segments[1] ?? "";
+  const rawSegments = useSegments();
+  const segments = rawSegments as string[]; 
+  const active = segments[1] ?? "index";
 
-  const TabButton = ({ name, icon, route }: TabButtonProps) => (
-    <TouchableOpacity
-      onPress={() => router.push(route as any)}
-      className="flex-1 items-center justify-center"
-    >
-      <Ionicons
-        name={icon}
-        size={22}
-        color={active === name.toLowerCase() ? "white" : "#bfbfbf"}
-      />
-      <Text
-        className={`text-xs mt-1 ${
-          active === name.toLowerCase() ? "text-white" : "text-gray-400"
-        }`}
+  const TabButton = ({ name, icon, route, routeName }: TabButtonProps) => {
+    const isActive = active === routeName;
+    
+    return (
+      <TouchableOpacity
+        onPress={() => router.push(route as any)}
+        className="flex-1 items-center justify-center"
       >
-        {name}
-      </Text>
-    </TouchableOpacity>
-  );
+        <Ionicons
+          name={icon}
+          size={22}
+          color={isActive ? "white" : "#bfbfbf"}
+        />
+        <Text
+          className={`text-xs mt-1 ${
+            isActive ? "text-white" : "text-gray-400"
+          }`}
+        >
+          {name}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
 
   return (
-    <>
-
-      {/* Glass Tab Bar */}
-      <View
-        className="absolute bottom-6 left-4 right-4"
-        style={{
-          height: 70,
-          borderRadius: 40,
-          overflow: "hidden",
-        }}
+    <View
+      className="absolute bottom-6 left-4 right-4"
+      style={{
+        height: 70,
+        borderRadius: 40,
+        overflow: "hidden",
+      }}
+    >
+      <BlurView
+        tint="dark"
+        intensity={50}
+        className="flex-1 flex-row bg-white/10"
       >
-        <BlurView
-          tint="dark"
-          intensity={50}
-          className="flex-1 flex-row bg-white/10"
-        >
-          <TabButton name="Home" icon="home-outline" route="/index" />
-          <TabButton name="Call" icon="call-outline" route="/call" />
-          <TabButton name="Updates" icon="albums-outline" route="/updates" />
-          <TabButton name="Profile" icon="person-outline" route="/profile" />
-        </BlurView>
-      </View>
-    </>
+        <TabButton name="Home" icon="home-outline" route="/(tabs)" routeName="index" />
+        <TabButton name="Call" icon="call-outline" route="/(tabs)/call" routeName="call" />
+        <TabButton name="Updates" icon="albums-outline" route="/(tabs)/updates" routeName="updates" />
+        <TabButton name="Profile" icon="person-outline" route="/(tabs)/profile" routeName="profile" />
+      </BlurView>
+    </View>
   );
 }
